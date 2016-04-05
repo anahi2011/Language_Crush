@@ -1,54 +1,24 @@
 
 
 
-//this part will draw a grid to place all the objects
-//size(512,512);
-/*
-for(int i=0; i<width; i+=48){
-   line(i,0,i,height);
- }
- for(int w=0; w<height; w+=48
- ){
-   line(0,w,width,w);
- }
- */
- //draw a circle inside of each box
- //in a grid form with random colors
-/* noStroke();
- background(23, 100, 240);
- 
- float x=0;
- while(x < width) {
-   float y= 0;
-   while(y<height){
-     if(random(100)>50){
-     fill(random(100,150)); //randomly create circles with differnt colors
-     }
-     else{
-      fill(random(0,105));
-     }
-   ellipse(x,y,40,40);
-   
-   y=y+40;
-   }
-   x=x+40;
- }
- */
+
  
 int value=0;
 int abc = 0;
-int cols = 4;
-int rows = 4;
+int cols = 8;
+int rows = 8;
 int[][] myArray = new int[cols][rows];
+ 
+String[] languages = { "java", "c++", "python" , "c#", "javascrip" }; 
  
 void setup()
 {
   textAlign(CENTER,CENTER);
-  ellipseMode(CENTER);
+  ellipseMode(RIGHT);
   size(500,500);
   for (int i = 0; i < cols; i++) {
     for (int j = 0; j < rows; j++) {
-      myArray[i][j] = abc++;
+      myArray[i][j] = (int)random(languages.length-1) + 1;
     }
   }
 }
@@ -62,11 +32,14 @@ void draw() {
     for (int j = 0; j < rows; j++)
     {
       fill(#ccffcc);
-      ellipse(64*i, 64*j,50,50);
-      //rect(width/cols, height/rows, width/3, height/18); // shuffle value
-      fill(0);
-      text("java", 60, 20);
-      fill(255, 0, 0);
+      if(myArray[i][j] != 0) {
+        ellipse(64*i, 64*j,50,50); 
+        //rect(width/cols, height/rows, width/3, height/18); // shuffle value
+        fill(0); 
+        textAlign(CENTER,CENTER);
+        text(languages[(myArray[i][j]) % languages.length], 64*i + 25,64*j + 25);
+        fill(255, 0, 0);
+      }
     }
   }
 }
