@@ -1,3 +1,5 @@
+import java.util.LinkedList;
+
 int value=0;
 int abc = 0;
 int cols = 8;
@@ -6,21 +8,74 @@ int health = 1;
 int[][] myArray = new int[cols][rows];
  
 String[] languages = { "java", "c++", "python" , "c#", "javascript" }; 
- 
-void setup()
-{
-  textAlign(CENTER,CENTER);
-  ellipseMode(RIGHT);
-  size(500,500);
-  for (int i = 0; i < cols; i++) {
-    for (int j = 0; j < rows; j++) {
-      myArray[i][j] = (int)random(languages.length-1) + 1;
-    }
+
+class Objects {
+  float y, vy, ay;
+  
+  boolean alive = true;
+  
+  void update(float dt) {
+    y += vy * dt;
+    vy += ay * dt;
   }
   
-  remove();
+ // void draw() { }
 }
- 
+
+class Ball extends Objects 
+{
+      int endx, endy;
+      
+      Ball(int ballx, int bally, int endy) {
+        y = bally;
+        endx = ballx;
+        this.endy = endy;
+        ay = 0.1;
+      }
+      
+      void update(float dt) {
+        super.update(dt);
+        
+        if(floor(y) == endy) 
+          alive = false;
+      }      
+      /*
+      void draw() {
+        fill(0);
+        rect(endx, endy, 64, 64);
+        
+        fill(255);
+        ellipse(endx,y,48,48);
+        
+       
+  }
+  
+  */
+  
+  LinkedList<Objects> fallingObjects;
+  LinkedList<Objects> new_fallingObjects;
+   
+  void setup()
+  {
+    fallingObjects = new LinkedList<Objects>();
+    new_fallingObjects = new LinkedList<Objects>();
+    
+    textAlign(CENTER,CENTER);
+    ellipseMode(RIGHT);
+    //size(500,500);
+    size (800,800);
+    for (int i = 0; i < cols; i++) {
+      for (int j = 0; j < rows; j++) {
+        myArray[i][j] = (int)random(languages.length-1) + 1;
+      }
+  }
+  
+ /* remove();
+  textSize(32);
+  text("Welcome to language Crasher",600,600);
+  fill(0,102,153);
+  */
+}
 void draw() {
   
   
@@ -40,6 +95,12 @@ void draw() {
       }
     }
   }
+  /*
+        fill(0);
+        rect(endx, endy, 64, 64);
+        
+        fill(255);
+        ellipse(endx,y,48,48); */
 }
 
       // this is the definition for our custom MovingCircle object,
@@ -93,7 +154,8 @@ void mouseClicked(){
   
 //It deletes the 3 similar languages which are in a row or a column.
 
-void remove(){                                         
+void remove()
+{                                         
 
   for(int y = 0; y < rows; y++)
     for(int x = 1; x < cols-1; x++)
@@ -109,37 +171,4 @@ void remove(){
    
 
 }
-/*
-// objects above the removed ones need to fall now
-
-void fall(){
-    
 }
- /*
-void mouseReleased() {
-  if (value == 0 && mouseX > width/3 && mouseX < width/3 + width/3 && mouseY > height/18*17 && mouseY < height/18*17 + height/18) { 
-    shuffleArray(myArray);
-  }
-  for (int i = 0; i < cols; i++) {
-    for (int j = 0; j < rows; j++) {
-      if (value == 0 && mouseX > 25+(50*i) && mouseX < 25+(50*i) +25 && mouseY > 50*j && mouseY < (50*j)+25) {
-        value = 255;
-        println("1st value"+ j);
-        println("2nd value"+ i );
-        fill(0, 255, 0);
-        ellipse(25+(50*i), 50*j, 25, 25);
- 
-        int getal = myArray[j][i] ;          
-        println("number: "+ getal);
- 
-        if (j == 3 && i == 5) {
-          println("oki!");
-        }
-        rect(25+(50*i), 50*j, 25, 25);
-      }
-      else {
-        value = 0;
-      }
-    }
-  }}
-*/
