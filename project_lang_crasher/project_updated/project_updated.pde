@@ -5,7 +5,7 @@ int rows = 8;
 int health = 1;
 int[][] myArray = new int[cols][rows];
 PFont font;// this is for our timer font
-String time = "60";//here is the count down time
+String time = "20";//here is the count down time
 int t;
 int interval = 60;
  
@@ -34,10 +34,13 @@ void draw() {
   {
   t= interval -int(millis()/1000);
   time = nf(t , 3);
-  if(t==0){
+  if(t<=0){
     println("Game Over");
+    noLoop();
     interval +=60;}
+    textSize(34);
     text(time, 600,600);
+    textSize(10);
   }
   //
   for (int i = 0; i < cols; i++) 
