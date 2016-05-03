@@ -5,6 +5,7 @@ int rows = 8;
 int health = 1;
 int[][] myArray = new int[cols][rows];
 PFont font;// this is for our timer font
+String message = "Language Crush";
 String time = "20";//here is the count down time
 int t;
 int interval = 60;
@@ -14,6 +15,7 @@ String[] languages = { "java", "c++", "python" , "c#", "javascript" };
 void setup()
 {
   font = createFont ("Arial", 30);// font for timer
+ 
   textAlign(CENTER,CENTER);
   ellipseMode(LEFT);
   size(800,800);
@@ -28,7 +30,6 @@ void setup()
  
 void draw() {
  
-  
   background(#330000);
   // here is the function for the timer
   {
@@ -38,7 +39,10 @@ void draw() {
     println("Game Over");
     noLoop();
     interval +=60;}
-    textSize(34);
+    textFont (font);
+    textSize(64);
+    text(message,260,600);
+    textSize(54);
     text(time, 600,600);
     textSize(10);
   }
