@@ -159,7 +159,7 @@ void mouseClicked(){
       swap(circlex,circley,first_click_x,first_click_y);
       if(remove())
         score = score + 50;
-      //seek_empty();
+      seek_empty();
      
     }
     else{
