@@ -1,66 +1,132 @@
+import java.util.LinkedList;
+//import processing.sound.*;
+//SoundFile file;
+
 int value=0;
 int abc = 0;
 int cols = 8;
 int rows = 8;
 int health = 1;
 int[][] myArray = new int[cols][rows];
-PFont font;// this is for our timer font
+
+//***********************Timer****************
+PFont font;
 String message = "Language Crush";
-String time = "20";//here is the count down time
+String time = "60";//here is the count down time
 String timer = "Time: ";
 int t;
-int interval = 60; // The initial timer interval
-int score = 0; // To track the score
+int interval = 60;
+int score = 0;
  
-String[] languages = { "Java", "C++", "Python" , "C#", "Javascript", "Ruby" }; 
- 
-void setup()
-{
-  font = createFont ("Arial", 30);// font for timer
- 
-  textAlign(CENTER,CENTER);
-  ellipseMode(LEFT);
-  size(800,800);
-  for (int i = 0; i < cols; i++) {
-    for (int j = 0; j < rows; j++) {
-      myArray[i][j] = (int)random(languages.length-1)+1;
-    }
+String[] languages = { "Java", "C++", "Python" , "C#", "JavaScript", "Haskell","Ruby" }; 
+
+class Objects {
+  float y, vy, ay;
+  
+  boolean alive = true;
+  
+  void update(float dt) {
+    y += vy * dt;
+    vy += ay * dt;
   }
   
-  remove();
+  void draw() { }
+}
+
+class Ball extends Objects 
+{
+      int endx, endy;
+      int lang;
+      
+      Ball(int ballx, int bally, int endy, int language) {
+        y = bally;
+        endx = ballx;
+        this.endy = endy;
+        ay = 0.1;
+        lang = language;
+      }
+      
+      void update(float dt) {
+        super.update(dt);
+        
+        if(floor(y) == endy) 
+          alive = false;
+      }      
+      
+      void draw() {
+        fill(0);
+        rect(endx, endy, 64, 64);
+        fill(255);
+        ellipse(endx,y,48,48);   
+        textAlign(CENTER,CENTER);
+        ellipseMode(RIGHT);
+        fill(0); 
+        textAlign(CENTER,CENTER);
+        text(languages[lang], endx,y);
+
+         }
+        
 }
  
+  LinkedList<Objects> fallingObjects;
+  LinkedList<Objects> new_fallingObjects;
+   
+  void setup()
+  {
+    fallingObjects = new LinkedList<Objects>();
+    new_fallingObjects = new LinkedList<Objects>();
+    //********************message*******************
+    font = createFont ("Arial", 30);// font for timer
+    //***********************************************
+    stroke(204, 102, 0);
+    rect(0, 0, 700, 700);
+    textAlign(CENTER,CENTER);
+    ellipseMode(RIGHT);
+    size (700,700);
+    for (int i = 0; i < cols; i++) {
+      for (int j = 0; j < rows; j++) {
+        myArray[i][j] = (int)random(languages.length-1) + 1;
+      }
+  }
+  
+ remove();
+ seek_empty();
+
+}
 void draw() {
- 
-  background(#330000);
-   //Here is the score part
-  textSize(32);
-  fill(0, 50, 255);
+  background(#f2eaf2);
+  //********************************
+  //Here is the score part
+  textSize(34);
+  fill(random(255),0,0);
   text("Score: " + score, 600, 50);
+  
+  
+  //***********Timer function to draw a timer*********
   // here is the function for the timer
   {
   t= interval -int(millis()/1000);
   time = nf(t , 3);
   if(t<=0){
-    println("Game Over");
+    text("Game Over", 600,400);
     noLoop();
     interval +=60;}
     textFont (font);
     textSize(64);
     text(message,260,600);
     textSize(54);
-    text(timer, 600, 550);
-    text(time, 600, 600);
+    text(timer, 610, 550);
+    text(time, 600,600);
     textSize(10);
   }
-  //
+  
   for (int i = 0; i < cols; i++) 
   {
     for (int j = 0; j < rows; j++)
     {
-      fill(#ccffcc);
+      fill(#ffa700);
       if(myArray[i][j] != 0) {
-        ellipse(64*i, 64*j, 50, 50); 
+        ellipse(64*i, 64*j,50,50); 
         //rect(width/cols, height/rows, width/3, height/18); // shuffle value
         fill(0); 
         textAlign(CENTER,CENTER);
@@ -69,14 +135,9 @@ void draw() {
       }
     }
   }
-}
-
-      // this is the definition for our custom MovingCircle object,
-// start with the name of the class (or type of object)
  
-  
-
-
+}
+ 
 
 // we need to check whether the clicked language is adjacent to the first selected language, if true, then swap else ignore the frst selection.
 
@@ -97,19 +158,16 @@ void mouseClicked(){
     if(abs(circlex - first_click_x) == 1 || abs(circley - first_click_y) == 1) {
       swap(circlex,circley,first_click_x,first_click_y);
       if(remove())
-          score = score + 50;
+        score = score + 50;
+      //seek_empty();
+     
     }
     else{
-    ;
+      ;
     }
     first_click = true;
   }
-
-   
 } 
-
-
-  
   
   // source is the frst lang to swap
   // dest is the second lang to swap with the first one
@@ -121,10 +179,32 @@ void mouseClicked(){
     myArray[cx1][cy1] = myArray[cx2][cy2];
     myArray[cx2][cy2] = temp;
     
+    
   }
   
-//It deletes the 3 similar languages which are in a row or a column.
-
+//**************function to look for the empty spaces and makes them fall***********************
+void seek_empty()
+{
+  //for(int k=0;k<cols; k++){
+    //for (int l = 0; l < rows-1; l++) {
+      for (int i = 0; i < cols; i++) {
+        for (int j = 0; j < rows-1; j++) {
+          if(myArray[i][j]!=0 && myArray[i][j+1] == 0){
+              myArray[i][j+1] = myArray[i][j];
+              myArray[i][j] = 0;
+       
+             }  
+            }
+        }
+     // }
+  //}
+  
+    
+  
+  
+}
+//******************************************************************************************************S
+//********************************function to remove ***************************************************
 boolean remove(){                                         
 
   boolean removed = false;
@@ -144,37 +224,3 @@ boolean remove(){
 
   return removed;
 }
-
-/*
-// objects above the removed ones need to fall now
-void fall(){
-    
-}
- /*
-void mouseReleased() {
-  if (value == 0 && mouseX > width/3 && mouseX < width/3 + width/3 && mouseY > height/18*17 && mouseY < height/18*17 + height/18) { 
-    shuffleArray(myArray);
-  }
-  for (int i = 0; i < cols; i++) {
-    for (int j = 0; j < rows; j++) {
-      if (value == 0 && mouseX > 25+(50*i) && mouseX < 25+(50*i) +25 && mouseY > 50*j && mouseY < (50*j)+25) {
-        value = 255;
-        println("1st value"+ j);
-        println("2nd value"+ i );
-        fill(0, 255, 0);
-        ellipse(25+(50*i), 50*j, 25, 25);
- 
-        int getal = myArray[j][i] ;          
-        println("number: "+ getal);
- 
-        if (j == 3 && i == 5) {
-          println("oki!");
-        }
-        rect(25+(50*i), 50*j, 25, 25);
-      }
-      else {
-        value = 0;
-      }
-    }
-  }}
-*/
